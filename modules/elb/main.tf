@@ -18,7 +18,7 @@ resource "aws_elb" "ecs" {
     interval            = "${var.interval}"
   }
 
-  instances                   = ["${split(",", var.instances)}"]
+ # instances                   = ["${split(",", var.instances)}"]
   subnets                     = ["${split(",", var.subnets)}"]
   cross_zone_load_balancing   = "${var.cross_zone_load_balancing}"
   idle_timeout                = "${var.idle_timeout}"

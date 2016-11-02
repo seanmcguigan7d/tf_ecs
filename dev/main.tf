@@ -30,19 +30,6 @@ module "sg_elb" {
   source_cidr_block   = "0.0.0.0/0"
 }
 
-module "app" {
-  source                      = "../modules/app"
-  ami                         = "ami-309ad443" /* ecs agent instance */
-  count                       = "3"
-  environment                 = "dev"
-  instance_type               = "t2.medium"
-  key_name                    = "ops"
-  security_groups             = "${module.sg_app.security_group_id}"
-  subnet_id                   = "${module.vpc.private_subnets}"
-  associate_public_ip_address = "false"
-  source_dest_check           = "false"
-}
-
 module "elb" {
   source              = "../modules/elb"
   name                = "dev-ecs-elb"
@@ -57,7 +44,7 @@ module "elb" {
   timeout             = 3
   target              = "HTTP:80/"
   interval            = 30
-  instances           = "${module.app.aws_instance}"
+ # instances           = "${module.app.aws_instance}"
   subnets                     = "${module.vpc.public_subnets}"
   cross_zone_load_balancing   = true
   idle_timeout                = 400
@@ -66,10 +53,31 @@ module "elb" {
   tag_name                    = "dev ecs elb"
 }
 
-module "autoscaling_groups" {
-  source = "../modules/autoscaling_groups"
+module "launch_configuration" {
+  source          = "../modules/launch_configuration"
+  environment     = "dev"
+  instance_type   = "t2.medium"
+  ami             = "ami-30491c43"
+  key_name        = "ops"
+  security_groups = "${module.sg_app.security_group_id}"
 }
 
-module "launch_congiuration" {
-  source = "../modules/launch_congiuration"
+module "autoscaling_groups" {
+  source               = "../modules/autoscaling_groups"
+  load_balancers       = "${module.elb.elb_id}"
+  vpc_zone_identifier  = "${module.vpc.private_subnets}"
+  launch_configuration = "${module.launch_configuration.ecs}"
+
+}
+
+module "autoscaling_policy" {
+  source                 = "../modules/autoscaling_policy"
+  autoscaling_group_name = "${module.autoscaling_groups.ecs_autoscaling_group}"
+}
+
+module "cloudwatch" {
+  source               = "../modules/cloudwatch"
+  agents_scale_up      = "${module.autoscaling_policy.agents_scale_up}"
+  agents_scale_down    = "${module.autoscaling_policy.agents_scale_down}"
+  autoscalinggroupname = "${module.autoscaling_groups.ecs_autoscaling_group}"
 }

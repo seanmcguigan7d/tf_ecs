@@ -9,7 +9,7 @@
   variable "timeout" {}
   variable "target" {}
   variable "interval" {}
-  variable "instances" {}
+ # variable "instances" {}
   variable "subnets" {}
   variable "ssl_certificate_id" {}
   variable "cross_zone_load_balancing" {}
