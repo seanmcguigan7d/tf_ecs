@@ -1,4 +1,4 @@
-resource "aws_sns_topic_subscription" "klassik_sub" {
+resource "aws_sns_topic_subscription" "ecs_sub" {
   endpoint               = "${var.endpoint}"
   endpoint_auto_confirms = "${var.endpoint_auto_confirms}"
   protocol               = "${var.protocol}"

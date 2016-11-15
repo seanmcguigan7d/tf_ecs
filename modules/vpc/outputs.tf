@@ -7,7 +7,7 @@ output "public_subnets" {
 }
 
 output "vpc_id" {
-  value = "${aws_vpc.klassik.id}"
+  value = "${aws_vpc.ecs.id}"
 }
 
 output "public_route_table_id" {

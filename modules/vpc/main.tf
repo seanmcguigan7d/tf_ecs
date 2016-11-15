@@ -1,12 +1,12 @@
-resource "aws_vpc" "klassik" {
+resource "aws_vpc" "ecs" {
   cidr_block           = "${var.cidr}"
   enable_dns_hostnames = "${var.enable_dns_hostnames}"
   enable_dns_support   = "${var.enable_dns_support}"
   tags { Name = "${var.name}" }
 }
 
-resource "aws_internet_gateway" "klassik" {
-  vpc_id = "${aws_vpc.klassik.id}"
+resource "aws_internet_gateway" "ecs" {
+  vpc_id = "${aws_vpc.ecs.id}"
   tags { Name = "${var.name}-igw" }
 }
 
@@ -27,15 +27,15 @@ resource "aws_eip" "nat" {
 /* place the nat gateway in ALL public subnets count the subnet ids */
 resource "aws_nat_gateway" "gw" {
     allocation_id = "${aws_eip.nat.id}"
-    depends_on    = ["aws_internet_gateway.klassik"]
+    depends_on    = ["aws_internet_gateway.ecs"]
     subnet_id     = "${element(aws_subnet.public.*.id, count.index)}"
 }
 
 resource "aws_route_table" "public" {
-  vpc_id = "${aws_vpc.klassik.id}"
+  vpc_id = "${aws_vpc.ecs.id}"
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.klassik.id}"
+    gateway_id = "${aws_internet_gateway.ecs.id}"
   }
   tags { Name = "${var.name}-public-route" }
 }
@@ -47,7 +47,7 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_route_table" "private" {
-  vpc_id = "${aws_vpc.klassik.id}"
+  vpc_id = "${aws_vpc.ecs.id}"
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = "${aws_nat_gateway.gw.id}"
@@ -62,7 +62,7 @@ resource "aws_route_table_association" "private" {
 }
 
 resource "aws_subnet" "private" {
-  vpc_id            = "${aws_vpc.klassik.id}"
+  vpc_id            = "${aws_vpc.ecs.id}"
   cidr_block        = "${element(split(",", var.private_subnets), count.index)}"
   availability_zone = "${element(split(",", var.azs), count.index)}"
   count             = "${length(compact(split(",", var.private_subnets)))}"
@@ -70,7 +70,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_subnet" "public" {
-  vpc_id            = "${aws_vpc.klassik.id}"
+  vpc_id            = "${aws_vpc.ecs.id}"
   cidr_block        = "${element(split(",", var.public_subnets), count.index)}"
   availability_zone = "${element(split(",", var.azs), count.index)}"
   count             = "${length(compact(split(",", var.public_subnets)))}"

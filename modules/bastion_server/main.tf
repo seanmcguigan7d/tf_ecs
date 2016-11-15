@@ -8,6 +8,6 @@ resource "aws_instance" "bastion" {
     associate_public_ip_address = "${var.associate_public_ip_address}"
     source_dest_check = "${var.source_dest_check}"
     tags {
-        Name = "klassik-bastion-${count.index}"
+        Name = "ecs-bastion-${count.index}"
     }
 }
