@@ -30,6 +30,11 @@ module "sg_elb" {
   source_cidr_block   = "0.0.0.0/0"
 }
 
+module "ecs_cluster" {
+  source              = "../modules/ecs_cluster"
+  ecs_cluster_name    = "klassik"
+}
+
 module "elb" {
   source              = "../modules/elb"
   name                = "dev-ecs-elb"

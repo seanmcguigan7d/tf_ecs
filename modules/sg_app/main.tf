@@ -21,20 +21,12 @@ resource "aws_security_group" "app_security_group" {
         self = true
     }
 
-    // allow traffic for TCP 80 (REST API Interface)
+    // allow traffic for TCP 5000 (REST API Interface)
     ingress {
-        from_port = 80
-        to_port = 80
+        from_port = 8080
+        to_port = 8080
         protocol = "tcp"
         security_groups = ["${var.elb_security_group}"]
-    }
-
-    // allow traffic for TCP 80 (REST API Interface)
-    ingress {
-        from_port = 22
-        to_port = 22
-        protocol = "tcp"
-        cidr_blocks = ["${var.source_cidr_block}"]
     }
 
     // allow node to call out
@@ -46,6 +38,6 @@ resource "aws_security_group" "app_security_group" {
     }
 
     tags {
-        Name = "ECS container application security group"
+        Name = "Klassik application security group"
     }
 }

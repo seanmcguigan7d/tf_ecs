@@ -10,10 +10,12 @@ resource "aws_autoscaling_group" "ecs" {
  #   launch_configuration = "${aws_launch_configuration.agent-lc.name}"
     launch_configuration = "${var.launch_configuration}"
     load_balancers = ["${var.load_balancers}"]
-      tag {
-    key = "Name"
-    value = "ecs-instance"
-    propagate_at_launch = true
+    enabled_metrics = ["GroupTerminatingInstances", "GroupMaxSize", "GroupDesiredCapacity", "GroupPendingInstances", "GroupInServiceInstances", "GroupMinSize", "GroupTotalInstances"]
+
+    
+    tag {
+      key = "Name"
+      value = "ecs-autoscaling-instance"
+      propagate_at_launch = true
   }
 }
-

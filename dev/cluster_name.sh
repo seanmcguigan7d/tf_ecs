@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo ECS_CLUSTER=my-ecs-cluster > /etc/ecs/ecs.config
+echo ECS_CLUSTER=klassik >> /etc/ecs/ecs.config
