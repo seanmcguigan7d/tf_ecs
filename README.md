@@ -1,7 +1,11 @@
 # tf_ecs
 terraform for the AWS ecs container service
+
+Get ECS EC2 instance profile details.
 ```
 aws iam get-instance-profile --instance-profile-name ecs_inst_profile
+```
+```
 {
     "InstanceProfile": {
         "InstanceProfileId": "AIPAISUEKRXXX2NHVWVRS", 
@@ -36,6 +40,7 @@ aws iam get-instance-profile --instance-profile-name ecs_inst_profile
     }
 }
 ```
+Instance profile ARN
 ```
 curl http://169.254.169.254/latest/meta-data/iam/info; echo
 {
